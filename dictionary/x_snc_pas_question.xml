@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Question" max_length="40" name="x_snc_pas_question" type="collection">
+        <element default="100" label="Order" max_length="40" name="order" type="integer"/>
+        <element default="javascript:current.getTableName();" label="Class" max_length="80" name="sys_class_name" type="sys_class_name"/>
+        <element display="true" label="Text" max_length="255" name="text" type="string"/>
+    </element>
+</database>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Review history" max_length="40" name="x_snc_pas_review_history" type="collection">
+        <element label="Date" max_length="40" name="date" type="glide_date"/>
+        <element label="Employee" max_length="32" name="employee" reference="sys_user" type="reference"/>
+        <element label="Score" max_length="20" name="score" type="decimal"/>
+        <index name="index">
+            <element name="employee"/>
+        </index>
+    </element>
+</database>

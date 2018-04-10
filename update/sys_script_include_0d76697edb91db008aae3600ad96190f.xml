@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_pas.QuestionUtils</api_name>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>QuestionUtils</name>
+        <script><![CDATA[var QuestionUtils = Class.create();
+QuestionUtils.prototype = {
+    initialize: function() {
+        this.templateTable = 'x_snc_pas_template';
+        this.questionTable = 'x_snc_pas_review_question';
+        this.scoreTable    = 'x_snc_pas_question_score';
+    },
+
+	/***
+	 *
+	 * Create a series of questions for a review task
+	 *
+	 * @param taskID - sys_id of the parent review task
+	 * @questionText - text of the question to ask
+	 * @return - none
+	 *
+	 ***/
+    createQuestions : function(taskID, questionText) {
+
+        var qList = questionText.split('\n');
+
+        for (var i = 0; i < qList.length; i++) {
+
+            var targetGr = new GlideRecord(this.questionTable);
+            targetGr.newRecord();
+
+            var q = qList[i].trim();
+
+            if (q.length == 0)
+                continue;
+
+            targetGr.setValue('text', q);
+            targetGr.setValue('order',  i + 1);
+            targetGr.setValue('review_task', taskID);
+
+            targetGr.insert();
+        }
+
+    },
+
+	/***
+	 *
+	 * Update the avg question score and total review score
+	 *
+	 * @param reviewGr - GlideRecord of the parent review
+	 * @return none
+	 *
+	 ***/
+    refreshScores : function(reviewGr) {
+
+        var reviewID = reviewGr.getValue('sys_id');
+        var scores   = this._buildScores(reviewID);
+				
+        this._updateScores(reviewID, scores);
+		reviewGr.score = this._calculateReviewScore(reviewGr, scores);
+		reviewGr.update();
+    },
+
+	/***
+	 *
+	 * Given a list of integers, find the average number
+	 *
+	 * @param list - array of integers
+	 * @return - decimal of sum/count
+	 *
+	 ***/
+    _arrayAverage : function(list) {
+
+		if (!list)
+			return 0;
+		
+		if (!list.length)
+			return 0;
+		
+        return this._arraySum(list) / list.length;
+    },
+
+	/***
+	 *
+	 * Add up the count of an array of integers
+	 *
+	 * @param list - array of integers
+	 * @return - integer value of all numbers counted
+	 *
+	 ***/
+    _arraySum : function(list) {
+        var sum = 0.0;
+		
+        for (i = 0; i < list.length; i++) {
+            sum += parseInt(list[i], 10);
+        }
+
+        return sum;
+
+    },
+
+	/***
+	 *
+	 * Create a list of score objects to parse/count/average across
+	 *
+	 * @param reviewID - sys_id of parent review record
+	 * @return - array of objects with order, text, score, and parent task sys_id
+	 *
+	 ***/
+    _buildScores : function(reviewID) {
+
+        var qList = [];
+        var qObj = {};
+        var lastQ = "";
+
+        var qGr = new GlideRecord(this.questionTable);
+        qGr.addQuery('review_task.review', reviewID);
+		qGr.addQuery('score', '!=', 0);
+        qGr.orderBy('order');
+        qGr.query();
+		
+		var rowCount = qGr.getRowCount();
+        gs.info(rowCount + ' records found');
+
+        while (qGr.next()) {
+
+            qOrder = qGr.getValue('order');
+            qText  = qGr.getValue('text');
+            qScore = qGr.getValue('score');
+            qTask  = qGr.getValue('review_task');
+            gs.info(qOrder + ' : "' + qText + '" score=' + qScore + ' task=' + qTask);
+
+            if (qText != lastQ) {
+                gs.info('new question...' + qOrder);
+                if (lastQ != "") {
+                    gs.info('next question');
+                    qList.push(qObj);
+                } else {
+                    gs.info('first question');
+                }
+                lastQ = qText;
+
+                qObj = {};
+                qObj.order  = qOrder;
+                qObj.text   = qText;
+                qObj.scores = [];
+            }
+            qObj.scores.push(qScore);
+
+        }
+		
+		// Avoid getting an empty object in the array and problems reading later
+		if (rowCount > 0)
+			qList.push(qObj);
+
+        return qList;
+
+    },
+	
+	/***
+	 *
+	 * Determine what the overall review score is based on question scores
+	 *
+	 * @param reviewGr - GlideRecord of parent review record
+	 * @return - float of average question scores
+	 *
+	 ***/
+	_calculateReviewScore : function(reviewGr) {
+		
+		var total = 0.0;
+		
+		var score = new GlideRecord(this.scoreTable);
+		score.addQuery('review', reviewGr.getValue('sys_id'));
+		score.query();
+		var count = score.getRowCount();
+		
+		while (score.next()) {
+			total += parseFloat(score.getValue('score'));
+		}
+		
+		var avg = total / count;
+		
+		return avg;
+		
+	},
+    
+	/***
+	 *
+	 * Upsert question scores across each reviewer
+	 *
+	 * @param reviewID - sys_id of parent review record
+	 * @param list - list of score record objects
+	 * @return none
+	 *
+	 ***/
+    _updateScores : function(reviewID, list) {
+		
+		if (list.length == 0) {
+			gs.addInfoMessage('No questions yet answered');
+			return;
+		}
+		
+        for (var i = 0; i < list.length; i++) {
+            var item  = list[i];
+            var avg   = this._arrayAverage(item.scores);
+            var text  = item.text;
+            var order = item.order;
+
+            var scoreGr = new GlideRecord(this.scoreTable);
+            scoreGr.addQuery('text', text);
+            scoreGr.addQuery('review', reviewID);
+            scoreGr.query();
+
+            if (scoreGr.next()) {
+                scoreGr.score = avg;
+                scoreGr.update();
+            } else {
+                scoreGr.newRecord();
+                scoreGr.text   = text;
+                scoreGr.review = reviewID;
+                scoreGr.score  = avg;
+                scoreGr.order  = order;
+                scoreGr.insert();
+            }
+        }
+    },
+
+    type: 'QuestionUtils'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>chuck.tomasi</sys_created_by>
+        <sys_created_on>2018-04-09 22:14:42</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>0d76697edb91db008aae3600ad96190f</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>QuestionUtils</sys_name>
+        <sys_package display_value="Performance Appraisal" source="x_snc_pas">aff2edb2db91db008aae3600ad9619ac</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance Appraisal">aff2edb2db91db008aae3600ad9619ac</sys_scope>
+        <sys_update_name>sys_script_include_0d76697edb91db008aae3600ad96190f</sys_update_name>
+        <sys_updated_by>chuck.tomasi</sys_updated_by>
+        <sys_updated_on>2018-04-09 23:35:05</sys_updated_on>
+    </sys_script_include>
+</record_update>

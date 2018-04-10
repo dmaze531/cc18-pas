@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element extends="x_snc_pas_question" label="Review question" max_length="40" name="x_snc_pas_review_question" type="collection">
+        <element label="Comment" max_length="1000" name="comment" type="string"/>
+        <element label="Review task" max_length="32" name="review_task" reference="x_snc_pas_review_task" type="reference"/>
+        <element default="0" label="Score" max_length="40" name="score" type="integer"/>
+        <index name="index">
+            <element name="review_task"/>
+        </index>
+    </element>
+</database>

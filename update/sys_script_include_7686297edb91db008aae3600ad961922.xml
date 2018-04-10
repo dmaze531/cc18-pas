@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_pas.ReviewTaskUtils</api_name>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>ReviewTaskUtils</name>
+        <script><![CDATA[var ReviewTaskUtils = Class.create();
+ReviewTaskUtils.prototype = {
+    initialize: function() {
+        this.taskTable = 'x_snc_pas_review_task';
+    },
+    
+	/***
+	 *
+	 * Generate the review tasks based on the reviewers in the review record
+	 *
+	 * @param reviewGr - GlideRecord of parent review record
+	 * @return - none
+	 *
+	 ***/
+	createReviewTasks : function(reviewGr) {
+
+		if (!reviewGr) {
+			gs.error('createReviewTasks(): no review record specified');
+			return;
+		}
+		
+		if (!reviewGr.template) {
+			var msg = 'No template specified on review';
+			gs.error(msg);
+			gs.addErrorMessage(msg);
+
+			return;            
+		}
+		
+		var reviewID      = reviewGr.getValue('sys_id');
+		var reviewersStr  = reviewGr.getValue('reviewers');
+		var reviewersList = reviewersStr.split(','); // array of user sys_ids
+		var templateText  = reviewGr.template.questions.toString();
+
+		for (var i = 0; i < reviewersList.length; i++) {
+			var taskGr = new GlideRecord(this.taskTable);
+			taskGr.newRecord();
+			taskGr.assigned_to = reviewersList[i];
+			taskGr.review      = reviewID;
+			var taskID         = taskGr.insert();
+
+			gs.info('Review task ' + taskGr.getDisplayValue() + ' created');
+			new QuestionUtils().createQuestions(taskID, templateText);
+
+		}
+
+	},
+	
+	/***
+	 *
+	 * Determine if the designated review record has child tasks
+	 * (used in UI action condition mostly)
+	 *
+	 * @param reviewID - sys_id of the review record to check
+	 * @return boolean (true if child records are found)
+	 *
+	 ***/
+    hasChildTasks : function(reviewID) {
+        
+        var taskGa = new GlideAggregate(this.taskTable);
+        taskGa.addQuery('review', reviewID);
+        taskGa.addAggregate('COUNT');
+        taskGa.query();
+		
+        var count = 0;
+        if (taskGa.next()) {
+            count = taskGa.getAggregate('COUNT');
+        }
+        
+        var countVal = parseInt(count, 10);
+        
+        return countVal != 0;
+        
+    },
+
+    type: 'ReviewTaskUtils'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>chuck.tomasi</sys_created_by>
+        <sys_created_on>2018-04-09 22:15:02</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>7686297edb91db008aae3600ad961922</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>ReviewTaskUtils</sys_name>
+        <sys_package display_value="Performance Appraisal" source="x_snc_pas">aff2edb2db91db008aae3600ad9619ac</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance Appraisal">aff2edb2db91db008aae3600ad9619ac</sys_scope>
+        <sys_update_name>sys_script_include_7686297edb91db008aae3600ad961922</sys_update_name>
+        <sys_updated_by>chuck.tomasi</sys_updated_by>
+        <sys_updated_on>2018-04-09 22:25:01</sys_updated_on>
+    </sys_script_include>
+</record_update>

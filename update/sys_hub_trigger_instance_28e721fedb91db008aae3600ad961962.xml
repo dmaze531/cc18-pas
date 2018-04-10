@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_hub_trigger_instance">
+    <sys_hub_trigger_instance action="INSERT_OR_UPDATE">
+        <display_text/>
+        <flow display_value="Set tasks to in progress">6c77ed7edb91db008aae3600ad9619b5</flow>
+        <name>Updated</name>
+        <remote_sys_id/>
+        <sys_class_name>sys_hub_trigger_instance</sys_class_name>
+        <sys_created_by>chuck.tomasi</sys_created_by>
+        <sys_created_on>2018-04-09 22:20:39</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>28e721fedb91db008aae3600ad961962</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>record_update</sys_name>
+        <sys_package display_value="Performance Appraisal" source="x_snc_pas">aff2edb2db91db008aae3600ad9619ac</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance Appraisal">aff2edb2db91db008aae3600ad9619ac</sys_scope>
+        <sys_update_name>sys_hub_trigger_instance_28e721fedb91db008aae3600ad961962</sys_update_name>
+        <sys_updated_by>chuck.tomasi</sys_updated_by>
+        <sys_updated_on>2018-04-09 22:20:44</sys_updated_on>
+        <trigger_definition display_value="Updated">bb695e60c31322002841b63b12d3aea5</trigger_definition>
+        <trigger_inputs/>
+        <trigger_outputs/>
+        <trigger_type>record_update</trigger_type>
+    </sys_hub_trigger_instance>
+    <sys_variable_value action="delete_multiple" query="document_key=28e721fedb91db008aae3600ad961962"/>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_trigger_instance</document>
+        <document_key>28e721fedb91db008aae3600ad961962</document_key>
+        <order>1</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>chuck.tomasi</sys_created_by>
+        <sys_created_on>2018-04-09 22:20:39</sys_created_on>
+        <sys_id>24e721fedb91db008aae3600ad961966</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>chuck.tomasi</sys_updated_by>
+        <sys_updated_on>2018-04-09 22:20:39</sys_updated_on>
+        <value>x_snc_pas_review</value>
+        <variable display_value="">1dda12e0c31322002841b63b12d3aea8</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_trigger_instance</document>
+        <document_key>28e721fedb91db008aae3600ad961962</document_key>
+        <order>101</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>chuck.tomasi</sys_created_by>
+        <sys_created_on>2018-04-09 22:20:39</sys_created_on>
+        <sys_id>28e721fedb91db008aae3600ad961965</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>chuck.tomasi</sys_updated_by>
+        <sys_updated_on>2018-04-09 22:20:39</sys_updated_on>
+        <value>always</value>
+        <variable display_value="">c19523d8c31932002841b63b12d3aea1</variable>
+    </sys_variable_value>
+    <sys_variable_value action="INSERT_OR_UPDATE">
+        <document>sys_hub_trigger_instance</document>
+        <document_key>28e721fedb91db008aae3600ad961962</document_key>
+        <order>100</order>
+        <sys_class_name>sys_variable_value</sys_class_name>
+        <sys_created_by>chuck.tomasi</sys_created_by>
+        <sys_created_on>2018-04-09 22:20:39</sys_created_on>
+        <sys_id>60e721fedb91db008aae3600ad961966</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>chuck.tomasi</sys_updated_by>
+        <sys_updated_on>2018-04-09 22:20:39</sys_updated_on>
+        <value>stateCHANGESTOin progress</value>
+        <variable display_value="">bb9adea0c31322002841b63b12d3ae67</variable>
+    </sys_variable_value>
+</record_update>

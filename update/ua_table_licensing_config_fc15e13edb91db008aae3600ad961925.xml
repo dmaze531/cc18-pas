@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="ua_table_licensing_config">
+    <ua_table_licensing_config action="INSERT_OR_UPDATE">
+        <is_fulfillment>false</is_fulfillment>
+        <license_condition/>
+        <license_model>none</license_model>
+        <license_roles/>
+        <name>x_snc_pas_review_task</name>
+        <op_delete>true</op_delete>
+        <op_insert>true</op_insert>
+        <op_update>true</op_update>
+        <owner_condition/>
+        <sys_class_name>ua_table_licensing_config</sys_class_name>
+        <sys_created_by>chuck.tomasi</sys_created_by>
+        <sys_created_on>2018-04-09 22:08:22</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>fc15e13edb91db008aae3600ad961925</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_pas_review_task</sys_name>
+        <sys_package display_value="Performance Appraisal" source="x_snc_pas">aff2edb2db91db008aae3600ad9619ac</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="Performance Appraisal">aff2edb2db91db008aae3600ad9619ac</sys_scope>
+        <sys_update_name>ua_table_licensing_config_fc15e13edb91db008aae3600ad961925</sys_update_name>
+        <sys_updated_by>chuck.tomasi</sys_updated_by>
+        <sys_updated_on>2018-04-09 22:08:22</sys_updated_on>
+    </ua_table_licensing_config>
+</record_update>

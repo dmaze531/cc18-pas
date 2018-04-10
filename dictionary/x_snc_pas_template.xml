@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="Template" max_length="40" name="x_snc_pas_template" type="collection">
+        <element display="true" label="Name" max_length="40" name="name" type="string"/>
+        <element label="Questions" max_length="4000" name="questions" type="string"/>
+    </element>
+</database>
